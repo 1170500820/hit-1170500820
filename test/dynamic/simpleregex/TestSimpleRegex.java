@@ -49,6 +49,7 @@ class TestSimpleRegex {
     Solution solution = new Solution();
     assertTrue(solution.isMatch("", "a*"));
     assertTrue(solution.isMatch("a", "a*"));
+    assertTrue(solution.isMatch("aa", "a*"));
     assertTrue(solution.isMatch("aaaaaaa", "a*"));
     assertFalse(solution.isMatch("b", "a*"));
     assertFalse(solution.isMatch("ab", "a*"));
@@ -120,7 +121,7 @@ class TestSimpleRegex {
     assertTrue(solution.isMatch("bcd", ".*bcd"));
     assertTrue(solution.isMatch("bcdbcd", ".*bcd"));
     assertTrue(solution.isMatch("bbbbcdbcd", ".*bcd"));
-    assertFalse(solution.isMatch("bcdbcde", ".*bcd"));
+    assertFalse(solution.isMatch("bcdbcde", ".*bcd")); 
     
     assertTrue(solution.isMatch("abcd", "ab.*cd"));
     assertTrue(solution.isMatch("abcdcdcd", "ab.*cd"));
@@ -135,6 +136,44 @@ class TestSimpleRegex {
     Solution solution = new Solution();
     assertFalse(solution.isMatch("abc", ""));
     assertTrue(solution.isMatch("", ""));
+  }
+  
+  @Test
+  public void testLeetCode() {
+    Solution solution = new Solution();
+    assertFalse(solution.isMatch("aa", "a"));
+    assertFalse(solution.isMatch("a", "aa"));
+    
+    assertTrue(solution.isMatch("aab", "c*a*b"));
+    
+    assertFalse(solution.isMatch("mississippi", "mis*is*p*."));
+  }
+  
+  @Test
+  public void testMoreCombine() {
+    Solution solution = new Solution();
+    
+    assertTrue(solution.isMatch("", "a*b*c*d*a*b*c*d*"));
+    assertTrue(solution.isMatch("abcbd", "a*b*c*d*a*b*c*d*"));
+    assertTrue(solution.isMatch("aadad", "a*b*c*d*a*b*c*d*")); 
+    assertFalse(solution.isMatch("ababa", "a*b*c*d*a*b*c*d*")); 
+    
+    assertTrue(solution.isMatch("abc", ".*abc.*"));
+    assertTrue(solution.isMatch("abcacd", ".*abc.*"));
+    assertTrue(solution.isMatch("afdsaabc", ".*abc.*"));
+    assertTrue(solution.isMatch("asfdaabcads", ".*abc.*"));
+    
+    assertTrue(solution.isMatch("caabc", ".a*b."));
+    assertTrue(solution.isMatch("cbb", ".a*b."));
+    assertTrue(solution.isMatch("bbb", ".a*b."));
+    
+    assertTrue(solution.isMatch("sfdsa", "....."));
+    assertTrue(solution.isMatch("aaaaa", "....."));
+    assertTrue(solution.isMatch("abcde", "....."));
+    
+    assertTrue(solution.isMatch("a", "..*"));
+    assertTrue(solution.isMatch("abc", "..*"));
+    assertTrue(solution.isMatch("aaaaaa", "..*"));
   }
 
 }
