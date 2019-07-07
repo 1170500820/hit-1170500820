@@ -1,8 +1,8 @@
 package dynamic.simpleregex;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 class TestSimpleRegex {
 
@@ -75,7 +75,7 @@ class TestSimpleRegex {
     assertTrue(solution.isMatch("abde", "abc*de"));
     assertTrue(solution.isMatch("abccccccde", "abc*de"));
     
-    //好吧，我真的错了，还必须加上空转移，杀了我吧
+    //this test case cannot pass ......fixing 
     assertFalse(solution.isMatch("aaba", "ab*a*c*a"));
   }
   

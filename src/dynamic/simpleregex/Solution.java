@@ -46,113 +46,71 @@ class Solution {
    * @param p the regular expression
    */
   private void scanRegex(String p) {
-    int currentStatus = 0;
-    int statusCount = 1;
     
-    if(p.isEmpty()) {
-      if(!sigma.isEmpty()) {
-        delta.add(new HashMap<Character, HashSet<Integer>>());
-        for(Character chas : sigma) {
-          HashSet<Integer> sets = new HashSet<Integer>();
-          sets.add(0);
-          delta.get(0).put(chas, sets);
-        }
-        endF.add(2);
-        return;
-      } else {
-        delta.add(new HashMap<Character, HashSet<Integer>>());
-        endF.add(0);
-      }
-    }
+    //任何NFA都必须有一个初始状态
+    delta.add(new HashMap<Character, HashSet<Integer>>());
+    int currentState = 0;
     
     for(int i = 0;i < p.length();i++) {
-      //set the type of expression
+      char readin = p.charAt(i);
+      
       boolean star = false;
-      char character = p.charAt(i);
-      boolean matchAll = character == '.';
-      
-      //check '*'
-      if(i + 1 < p.length()) {
-        if(p.charAt(i + 1) == '*') { 
-          star = true;
-          i++;
-        }
-      }    
-      
-      boolean end = false;
-      if(i + 1 == p.length()) {
-        end = true;
+      boolean allMatch = false;      
+      if(readin == '.') {
+        allMatch = true;
       }
-      
-      
-      if(delta.size() < currentStatus + 1) {
-        delta.add(new HashMap<Character, HashSet<Integer>>());
+      if(i + 1 <p.length() && p.charAt(i + 1) == '*') { 
+        star = true;
+        i++;
       }
       
       if(star) {
-        if(matchAll) {
-          //" .* "
+        if(allMatch) {
+          HashSet<Integer> thisStates = new HashSet<Integer>();
+          thisStates.add(currentState);
           for(Character chars : sigma) {
-            if(delta.get(currentStatus).containsKey(chars)) {
-              delta.get(currentStatus).get(chars).add(currentStatus);
-            } else {
-              HashSet<Integer> integerset = new HashSet<Integer>();
-              integerset.add(currentStatus);
-              delta.get(currentStatus).put(chars, integerset);
-            }
+            delta.get(currentState).put(chars, thisStates);
           }
-          HashSet<Integer> integerset = new HashSet<Integer>();
-          integerset.add(currentStatus + 1);
-          delta.get(currentStatus).put('!', integerset);
-          currentStatus++;
+          HashSet<Integer> nextStates = new HashSet<Integer>();
+          nextStates.add(currentState + 1);
+          delta.get(currentState).put('-', nextStates);
+          delta.add(new HashMap<Character, HashSet<Integer>>());
+          currentState++;
         } else {
-          //" a* "
-          if(delta.get(currentStatus).containsKey(character)) {
-            delta.get(currentStatus).get(character).add(currentStatus);
-          } else {
-            HashSet<Integer> integerset = new HashSet<Integer>();
-            integerset.add(currentStatus);
-            delta.get(currentStatus).put(character, integerset);
-          }
-          HashSet<Integer> integerset = new HashSet<Integer>();
-          integerset.add(currentStatus + 1);
-          delta.get(currentStatus).put('!', integerset);
-          currentStatus++;
-        }
-        if(end) {
-          endF.add(currentStatus);
+          HashSet<Integer> thisStates = new HashSet<Integer>();
+          thisStates.add(currentState);
+          delta.get(currentState).put(readin, thisStates);
+          HashSet<Integer> nextStates = new HashSet<Integer>();
+          nextStates.add(currentState + 1);
+          delta.get(currentState).put('-', nextStates);
+          delta.add(new HashMap<Character, HashSet<Integer>>());
+          currentState++;
         }
       } else {
-        if(matchAll) {
-          // " . "
+        if(allMatch) {
+          //.
+          HashSet<Integer> nextStates = new HashSet<Integer>();
+          nextStates.add(currentState + 1);
           for(Character chars : sigma) {
-            if(delta.get(currentStatus).containsKey(chars)) {
-              delta.get(currentStatus).get(chars).add(currentStatus + 1);
-            } else {
-              HashSet<Integer> integerset = new HashSet<Integer>();
-              integerset.add(currentStatus + 1);
-              delta.get(currentStatus).put(chars, integerset);
-            }
+            delta.get(currentState).put(chars, nextStates);
           }
+          delta.add(new HashMap<Character, HashSet<Integer>>());
+          currentState++;
         } else {
-          // " a "
-          if(delta.get(currentStatus).containsKey(character)) {
-            delta.get(currentStatus).get(character).add(currentStatus + 1);
-          } else {
-            HashSet<Integer> integerset = new HashSet<Integer>();
-            integerset.add(currentStatus + 1);
-            delta.get(currentStatus).put(character, integerset);
-          }
-        }
-        currentStatus++;
-        if(end) {
-          endF.add(currentStatus);
+          //a
+          HashSet<Integer> nextStates = new HashSet<Integer>();
+          nextStates.add(currentState + 1);
+          delta.get(currentState).put(readin, nextStates);
+          delta.add(new HashMap<Character, HashSet<Integer>>());
+          currentState++;
         }
       }
     }
-    if(sigma.isEmpty()) {
+    if(p.isEmpty()) {
       endF.add(0);
+      return;
     }
+    endF.add(currentState);
   }
 
   /**
@@ -164,6 +122,9 @@ class Solution {
    */
   private boolean scanText(String s,int index, int currentState) {
     if(index >= s.length()) {
+      if(delta.get(currentState).containsKey('-')) {
+        return scanText(s, index, currentState + 1);
+      }
       if(endF.contains(currentState)) { 
         return true;
       } else {
@@ -181,12 +142,10 @@ class Solution {
         flag = flag || scanText(s, index + 1, ints);
       }
     }
-    if(delta.get(currentState).containsKey('!')) {
-      HashSet<Integer> status = delta.get(currentState).get('!');
-      for(Integer ints : status) {
-        flag = flag || scanText(s, index + 1, ints);
-      }
+    //空转移
+    if(delta.get(currentState).containsKey('-')) {
+      flag = flag || scanText(s, index, currentState + 1);
     }
-    return false;
+    return flag;
   }
 }
