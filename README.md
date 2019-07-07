@@ -13,10 +13,4 @@ solution2 uses standard dynamic programming, and solution3 does a little tuning 
 
 ### regex
 
-solution failed at 
-
-> ​    assertFalse(solution.isMatch("aaba", "ab*a*c*a"));
-
-I am trying to add epsilon-transform to the NFA, but failed.
-
-work on this later, I need a rest
+My solution is perfect!
