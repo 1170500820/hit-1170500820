@@ -14,7 +14,7 @@ class TestSolution2 {
    * Solution2 testing strategy
    *    string length: 0, 1, 2, 3, 4, 100
    *    palindrome length : 1, odd, even
-   *    palindrome contains: 1, more, whole, ÖØµþ£¬
+   *    palindrome contains: 1, more, whole, ï¿½Øµï¿½ï¿½ï¿½
    */
   @Test
   public void testLength() {
